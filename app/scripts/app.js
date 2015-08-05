@@ -45,4 +45,10 @@
   };
 })(); 
 
+    // Initialize office
+Office.initialize = function (reason) {
+    $(document).ready(function () {
+      //  $log.log('Initialized Word');
+    });
+}
 

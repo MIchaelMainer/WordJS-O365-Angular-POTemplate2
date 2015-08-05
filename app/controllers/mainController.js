@@ -11,12 +11,7 @@
 
 	MainController.$inject = ['$log', '$q', 'adalAuthenticationService', 'office365Factory'];
     
-    // Initialize office
-Office.initialize = function (reason) {
-    $(document).ready(function () {
-      //  $log.log('Initialized Word');
-    });
-}
+
     
 	
 	/**
@@ -100,7 +95,9 @@ Office.initialize = function (reason) {
             // Queue: get the user's current selection and create a range object named range.
             // Queue: insert 'Hello World!' at the end of the selection.
             var range = ctx.document.getSelection();
-            range.insertText(JSON.stringify(contact), Word.InsertLocation.end);
+            
+            range.insertText('Inserted', Word.InsertLocation.end);
+//            range.insertText(JSON.stringify(contact), Word.InsertLocation.end);
 
             // Run the set of actions in the queue. In this case, we are inserting text
             // at the end of range. 
