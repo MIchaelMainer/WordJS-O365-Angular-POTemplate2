@@ -1,0 +1,25 @@
+<!-- Copyright (c) Microsoft. All rights reserved. Licensed under the MIT license. See full license at the bottom of this
+file. -->
+<div class="container-fluid">
+  <div class="row" ng-show="!userInfo.isAuthenticated">
+    <div class="col-xs-6">
+      <h2 class="lead">Use the button in the navigation bar to connect to Office 365.</h2>
+    </div>
+  </div>
+    
+        <row>
+        <!-- Show button with Potemplate contacts-->
+        <div class="form-group" 
+             ng-model="selectedContact" 
+             ng-if="main.contacts.length > 0 && userInfo.isAuthenticated">
+            <div class="col-xs-3 selectContainer">
+                <select class="form-control" 
+                        ng-model="selectedContact" 
+                        ng-options="contact.Id as contact.Surname for contact in main.contacts" 
+                        ng-change="main.getSelectedContact(selectedContact)">
+                    <option value="">--choose a contact --</option>
+                </select>
+            </div>
+        </div>
+    </row>
+</div>
