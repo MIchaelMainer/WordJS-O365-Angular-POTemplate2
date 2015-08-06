@@ -75,8 +75,10 @@
 				office365.getSelectedContact(id)
 					.then(function (response) {
 						// Bind data to the view model.
-						vm.selectedContact = response.data.value;	
-
+						vm.selectedContact = response.data;	
+                        
+                        $log.log('Contact info: ' + JSON.stringify(response.data) );
+                    
                         InsertContact(vm.selectedContact);
                     
                     
@@ -95,8 +97,17 @@
             // Queue: get the user's current selection and create a range object named range.
             // Queue: insert 'Hello World!' at the end of the selection.
             var range = ctx.document.getSelection();
+
+                        var contactInfo = JSON.stringify(contact);
             
-            range.insertText('Inserted', Word.InsertLocation.end);
+//            var contactInfo = contact.GivenName + ',' + contact.Surname + '\n' +
+//                              contact.BusinessAddress.Street + '\n' +
+//                              contact.BusinessAddress.City + '\n' + 
+//                              contact.BusinessAddress.State + '\n' +
+//                              contact.BusinessAddress.Postalcode + '\n';
+                              
+            
+            range.insertText(contactInfo, Word.InsertLocation.end);
 //            range.insertText(JSON.stringify(contact), Word.InsertLocation.end);
 
             // Run the set of actions in the queue. In this case, we are inserting text

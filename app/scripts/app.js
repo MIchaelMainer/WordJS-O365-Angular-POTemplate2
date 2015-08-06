@@ -18,8 +18,8 @@
       .when('/', {
         templateUrl: 'views/main.html',
         controller: 'MainController',
-        controllerAs: 'main',
-        requireADLogin: true
+        controllerAs: 'main'
+       // requireADLogin: true
       })
       .otherwise({
         redirectTo: '/'
