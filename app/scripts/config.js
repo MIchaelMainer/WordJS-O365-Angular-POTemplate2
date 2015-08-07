@@ -3,6 +3,6 @@
 */
 
 // Enter the appropriate values from your app's entry in the Azure Management Portal. 
-var tenant = 'patsoldemo5.onmicrosoft.com';
-var clientId = '2ab92af3-360e-4071-9f89-bf235ff12cf6';  
+var tenant = '';
+var clientId = '';  
 
