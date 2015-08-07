@@ -12,10 +12,11 @@ file. -->
         <div class="form-group" 
              ng-model="selectedContact" 
              ng-if="main.contacts.length > 0 && userInfo.isAuthenticated">
-            <div class="col-xs-3 selectContainer">
+            <p>Select a contact to insert their contact information in to the document:</p>
+            <div class="col-xs-5 selectContainer">
                 <select class="form-control" 
                         ng-model="selectedContact" 
-                        ng-options="contact.Id as contact.Surname for contact in main.contacts" 
+                        ng-options="contact.Id as contact.displayName for contact in main.contacts" 
                         ng-change="main.getSelectedContact(selectedContact)">
                     <option value="">--choose a contact --</option>
                 </select>

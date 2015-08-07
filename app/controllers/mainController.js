@@ -25,7 +25,7 @@
         var vm = this;
 		
         // prop
-        vm.selectedContact;
+        vm.selectedContact = [];
         vm.contacts = [];
         
         // methods
@@ -52,8 +52,10 @@
 			return $q(function (resolve, reject) {
 				office365.getContactList()
 					.then(function (response) {
-						// Bind data to the view model.
-						vm.contacts = response.data.value;	
+                        
+                        // Bind the contacts in the response to the view model.
+                        setupContactViewModel(response);
+                        
                         $log.log('We got back ' + vm.contacts.length + ' contact(s)' );
                     
 						resolve();
@@ -62,6 +64,24 @@
 					});
 			});
 		};
+        
+        // Update the view model to display lastname, firstname.
+        // Add the contacts to the viewmodel.
+        function setupContactViewModel(response) {
+            
+            var contacts = response.data.value;
+            
+            if (contacts.length > 0)
+            {
+                for (i = 0; i < contacts.length; i++) {
+                    contacts[i].displayName = contacts[i].Surname + 
+                                              ', ' + 
+                                              contacts[i].GivenName;
+                }     
+            }
+            
+            vm.contacts = contacts;
+        };
         
         function getSelectedContact(id) {
             
@@ -90,6 +110,14 @@
 		};
         
         
+        function stringifyContact(responseData) {
+            var contact = {};
+            
+            
+            
+            
+        }
+        
         function InsertContact(contact){
 
             var ctx = new Word.RequestContext();
@@ -98,9 +126,9 @@
             // Queue: insert 'Hello World!' at the end of the selection.
             var range = ctx.document.getSelection();
 
-                        var contactInfo = JSON.stringify(contact);
+            //            var contactInfo = JSON.stringify(contact);
             
-//            var contactInfo = contact.GivenName + ',' + contact.Surname + '\n' +
+            var contactInfo = contact.GivenName + ', ' + contact.Surname + '\n';// +
 //                              contact.BusinessAddress.Street + '\n' +
 //                              contact.BusinessAddress.City + '\n' + 
 //                              contact.BusinessAddress.State + '\n' +
