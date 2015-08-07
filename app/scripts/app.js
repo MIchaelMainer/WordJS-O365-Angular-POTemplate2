@@ -31,7 +31,7 @@
         tenant: tenant,
         clientId: clientId,
         //redirectUri: 'http://127.0.0.1:8080',
-        //cacheLocation: 'localStorage',
+        cacheLocation: 'localStorage',
         endpoints: {
             'https://outlook.office365.com': 'https://outlook.office365.com'
         }

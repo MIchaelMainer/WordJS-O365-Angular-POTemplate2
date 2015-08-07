@@ -2,8 +2,6 @@
 * Copyright (c) Microsoft. All rights reserved. Licensed under the MIT license. See full license at the bottom of this file.
 */
 
-
-
 (function () {
 	angular
 		.module('poTemplateApp')
@@ -11,35 +9,26 @@
 
 	MainController.$inject = ['$log', '$q', 'adalAuthenticationService', 'office365Factory'];
     
-
-    
-	
 	/**
 	 * The MainController code.
 	 */
 	function MainController($log, $q, adalAuthenticationService, office365) {
 		
-
-        
         // Setup the viewmodel
         var vm = this;
 		
-        // prop
-        vm.selectedContact = [];
+        // properties
         vm.contacts = [];
         
         // methods
         vm.getContactList = getContactList;
         vm.getSelectedContact = getSelectedContact;
-        
-        
-        
-        
+            
 		/////////////////////////////////////////
 		// End of exposed properties and methods.
 		
-		// Activate controller when it loads.
-		activate();
+		// Activate controller when it loads. Should turn this into an IIFE
+        activate();
         
         function activate() {
 			// Once the user is logged in, fetch the data.
@@ -55,10 +44,8 @@
                         
                         // Bind the contacts in the response to the view model.
                         setupContactViewModel(response);
-                        
-                        $log.log('We got back ' + vm.contacts.length + ' contact(s)' );
                     
-						resolve();
+                        resolve();
 					}, function (err) {
 						reject(err);
 					});
@@ -94,12 +81,12 @@
 			return $q(function (resolve, reject) {
 				office365.getSelectedContact(id)
 					.then(function (response) {
-						// Bind data to the view model.
-						vm.selectedContact = response.data;	
                         
                         $log.log('Contact info: ' + JSON.stringify(response.data) );
-                    
-                        InsertContact(vm.selectedContact);
+                        
+                        // Send the selected contact information to 
+                        // be inserted into Word.
+                        insertContact(response.data);
                     
                     
 						resolve();
@@ -109,40 +96,60 @@
 			});
 		};
         
-        
-        function stringifyContact(responseData) {
-            var contact = {};
-            
-            
-            
-            
-        }
-        
-        function InsertContact(contact){
+        function insertContact(contact){
 
+            // Prepare info for the view (Word)
+            var contactName = contact.Surname + ', ' + contact.GivenName;
+            var street = contact.BusinessAddress.Street;
+            var cityStateZIP = contact.BusinessAddress.City + ", " +
+                               contact.BusinessAddress.State + " " +
+                               contact.BusinessAddress.PostalCode;
+            var businessPhone1 = contact.BusinessPhones[0];
+            
+            // Get the client request context.
             var ctx = new Word.RequestContext();
 
-            // Queue: get the user's current selection and create a range object named range.
-            // Queue: insert 'Hello World!' at the end of the selection.
-            var range = ctx.document.getSelection();
+            var contentControls = ctx.document.body.contentControls;
 
-            //            var contactInfo = JSON.stringify(contact);
-            
-            var contactInfo = contact.GivenName + ', ' + contact.Surname + '\n';// +
-//                              contact.BusinessAddress.Street + '\n' +
-//                              contact.BusinessAddress.City + '\n' + 
-//                              contact.BusinessAddress.State + '\n' +
-//                              contact.BusinessAddress.Postalcode + '\n';
-                              
-            
-            range.insertText(contactInfo, Word.InsertLocation.end);
-//            range.insertText(JSON.stringify(contact), Word.InsertLocation.end);
+            ctx.load(contentControls, {select: 'text,tag,id',
+                                       expand: 'items'});
 
-            // Run the set of actions in the queue. In this case, we are inserting text
-            // at the end of range. 
+            // Run the set of actions in the queue. 
             ctx.executeAsync()
                 .then(function () {
-                    console.log("Done");
+                    for (var i = 0; i < contentControls.items.length; i++) {
+
+                        // Set the text value of the content controls.
+                        switch(contentControls.items[i].tag) {
+                            case 'purchaserName':
+                                contentControls.items[i].removeWhenEdited = false;
+                                contentControls.items[i].insertText(contactName, Word.InsertLocation.replace);
+                                break;
+                            case 'companyName':
+                                contentControls.items[i].removeWhenEdited = false;
+                                contentControls.items[i].insertText(contact.CompanyName, Word.InsertLocation.replace);
+                                break;
+                            case 'streetAddress':
+                                contentControls.items[i].removeWhenEdited = false;
+                                contentControls.items[i].insertText(street, Word.InsertLocation.replace);
+                                break;
+                            case 'citySTzip':
+                                contentControls.items[i].removeWhenEdited = false;
+                                contentControls.items[i].insertText(cityStateZIP, Word.InsertLocation.replace);
+                                break;
+                            case 'phone':
+                                contentControls.items[i].removeWhenEdited = false;
+                                contentControls.items[i].insertText(businessPhone1, Word.InsertLocation.replace);
+                                break;
+                            default: break;
+                        }
+                    }
+                
+                    ctx.executeAsync()
+                        .then(function(){
+                            console.log("Success");
+                        });
+            
                 })
                 .catch(function(error){
                     console.log("ERROR: " + JSON.stringify(error));

@@ -35,7 +35,7 @@
             var request = {
                 method: 'GET',
                 url: baseUrl + '/' + id + '?$select=GivenName,Surname,' +
-                     'BusinessAddress,BusinessPhones,EmailAddresses'
+                     'BusinessAddress,BusinessPhones,CompanyName,EmailAddresses'
             };
             
             return $http(request);
